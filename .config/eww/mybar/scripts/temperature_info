@@ -1,5 +1,24 @@
-#!/bin/sh
+#!/bin/bash
 
-temp=$(sensors | grep 'Package id 0:\|Tctl' | grep ':[ ]*+[0-9]*.[0-9]*°C' -o | grep '[0-9]*.[0-9]*°C' -o)
-temp=${temp::-4}
+# Check if the "sensors" command is available
+if ! command -v sensors &>/dev/null; then
+    echo "Error: the 'sensors' command is not available. Please install it and try again."
+    exit 1
+fi
+
+# Get the temperature information from the "sensors" command
+temp=$(sensors | awk '/Tctl/ {sub(/°C/, "", $NF); print $NF}' | head -n 1)
+
+# If Tctl is not present, use the first temperature field that is found
+if [[ -z "$temp" ]]; then
+    temp=$(sensors | awk '/:[ ]*+[0-9]*\.[0-9]*°C/ {sub(/°C/, "", $NF); print $NF}' | head -n 1)
+fi
+
+# Check if the temperature was successfully extracted
+if [[ -z "$temp" ]]; then
+    echo "Error: unable to extract temperature information."
+    exit 1
+fi
+
+# Print the temperature
 echo "$temp"
