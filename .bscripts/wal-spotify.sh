@@ -2,7 +2,7 @@
 
 source "${HOME}/.cache/wal/colors.sh"
 
-spicetify color text "$color9" 
+spicetify color text "$color9"
 spicetify color subtext "$color15"
 spicetify color button-text "$color15"
 spicetify color main "$color0"

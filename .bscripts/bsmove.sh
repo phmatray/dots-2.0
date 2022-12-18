@@ -26,19 +26,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-[ "$#" -eq 1 ] || { echo "Pass only one argument: north,east,south,west"; exit 1; }
+[ "$#" -eq 1 ] || {
+	echo "Pass only one argument: north,east,south,west"
+	exit 1
+}
 
 # Check if argument is a valid direction.
 case "$1" in
-	north|east|south|west)
-		dir="$1"
-		;;
-	*)
-		echo "Not a valid argument."
-		echo "Use one of: north,east,south,west"
-		exit 1
-		;;
+north | east | south | west)
+	dir="$1"
+	;;
+*)
+	echo "Not a valid argument."
+	echo "Use one of: north,east,south,west"
+	exit 1
+	;;
 esac
 
 _query_nodes() {
@@ -46,7 +48,10 @@ _query_nodes() {
 }
 
 # Do not operate on floating windows!
-[ -z "$(_query_nodes focused.floating)" ] || { echo "Only move tiled windows."; exit 1; }
+[ -z "$(_query_nodes focused.floating)" ] || {
+	echo "Only move tiled windows."
+	exit 1
+}
 
 receptacle="$(_query_nodes 'any.leaf.!window')"
 
@@ -59,4 +64,3 @@ else
 	#bspc node @/ -p "$dir" -i && bspc node -n "$receptacle" --follow
 	true
 fi
-
