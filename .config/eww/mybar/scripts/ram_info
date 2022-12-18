@@ -1,16 +1,38 @@
-#!/bin/sh
+#!/bin/bash
 
-case $1 in
-"--used")
-    free -m | grep Mem | awk '{printf $3 / 100}'
-    ;;
-"--all")
-    free -m | grep Mem | awk '{printf $2 / 100}'
-    ;;
-"--parsed")
-    free -h | grep Mem | awk '{printf $3 " / " $2}'
-    ;;
-*)
-    true
-    ;;
-esac
+# Check if the "free" command is available
+if ! command -v free &>/dev/null; then
+    echo "Error: the 'free' command is not available. Please install it and try again."
+    exit 1
+fi
+
+# Parse command-line arguments
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+        --used)
+            # Print the used memory in megabytes
+            free -m | awk '/Mem:/ {print $3}'
+            exit 0
+            ;;
+        --all)
+            # Print the total available memory in megabytes
+            free -m | awk '/Mem:/ {print $2}'
+            exit 0
+            ;;
+        --parsed)
+            # Print the used and total memory in a human-readable format
+            free -h | awk '/Mem:/ {printf("%s / %s", $3, $2)}'
+            exit 0
+            ;;
+        *)
+            # Print usage information if an invalid argument is provided
+            echo "Usage: ram_info.sh [--used|--all|--parsed]"
+            exit 1
+            ;;
+    esac
+    shift
+done
+
+# If no arguments are provided, print usage information
+echo "Usage: ram_info.sh [--used|--all|--parsed]"
